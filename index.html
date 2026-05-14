@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kayıt Formu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ana-renk: #ffffff;
+            --vurgu: #1a237e;
+            --vurgu-alt: #4a148c;
+            --metin: #2d3436;
+            --input-bg: #f8f9fa;
+        }
+
+        body {
+            background-color: var(--ana-renk);
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #fdfdfd;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(26, 35, 126, 0.1);
+            box-shadow: 0 15px 35px rgba(26, 35, 126, 0.05);
+        }
+
+        .header { text-align: center; margin-bottom: 30px; }
+        .header i { font-size: 3.5rem; color: var(--vurgu); margin-bottom: 15px; }
+        .header h2 { color: var(--vurgu); font-weight: 900; font-size: 1.8rem; text-transform: uppercase; margin: 0; }
+
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 8px; font-weight: 700; font-size: 0.75rem; color: var(--vurgu); text-transform: uppercase; }
+        
+        input, select {
+            width: 100%; padding: 12px 16px; background: var(--input-bg);
+            border: 1px solid rgba(26, 35, 126, 0.1); border-radius: 12px;
+            font-family: 'Montserrat', sans-serif; outline: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--vurgu-alt);
+            background: #fff;
+            box-shadow: 0 0 8px rgba(74, 20, 140, 0.1);
+        }
+
+        .student-fields {
+            background: rgba(26, 35, 126, 0.02);
+            padding: 15px; border-radius: 12px; border: 1px dashed rgba(26, 35, 126, 0.2);
+            margin-top: 10px; display: none;
+        }
+
+        button {
+            width: 100%; padding: 16px; background: var(--vurgu); border: none;
+            border-radius: 12px; color: #fff; font-weight: 800;
+            text-transform: uppercase; cursor: pointer; transition: 0.3s;
+            letter-spacing: 1px;
+        }
+
+        button:hover { background: var(--vurgu-alt); transform: translateY(-2px); }
+
+        #result-box {
+            display: none; text-align: center; margin-top: 25px; padding: 20px;
+            border-radius: 12px; background: rgba(0, 255, 136, 0.05); border: 1px solid #00ff884d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <i class="fas fa-atom"></i>
+        <h2>KAYIT FORMU</h2>
+        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">STEM Başvuru Paneli</p>
+    </div>
+
+    <form id="regForm">
+        <!-- ZORUNLU ALAN: Mentör -->
+        <div class="form-group">
+            <label><i class="fas fa-chalkboard-teacher"></i> MENTÖR ADI SOYADI *</label>
+            <input type="text" name="mentor_adi" id="mentor_adi" required placeholder="Ad Soyad bilgisini giriniz">
+        </div>
+
+        <!-- ZORUNLU ALAN: Takım Adı -->
+        <div class="form-group">
+            <label><i class="fas fa-users"></i> TAKIM ADI *</label>
+            <input type="text" name="takim_adi" id="takim_adi" required placeholder="Takım ismini yazınız">
+        </div>
+
+        <!-- ZORUNLU ALAN: Kurum -->
+        <div class="form-group">
+            <label><i class="fas fa-school"></i> OKUL / KURUM *</label>
+            <input type="text" name="kurum" id="kurum" required placeholder="Okulunuzun tam adını giriniz">
+        </div>
+
+        <!-- ZORUNLU ALAN: Kategori -->
+        <div class="form-group">
+            <label><i class="fas fa-trophy"></i> YARIŞMA KATEGORİSİ *</label>
+            <select name="kategori" id="kategoriSelect" required onchange="updateStudentFields()">
+                <option value="" disabled selected>Kategori Seçiniz...</option>
+                <option value="Mini Sumo">Mini Sumo Yarışması (1 Öğrenci)</option>
+                <option value="Kagit Kule">Kağıt Kule Yarışması (3 Öğrenci)</option>
+                <option value="Kagit Roket">Kağıt Roket Yarışması (2 Öğrenci)</option>
+                <option value="Cizgi Izleyen">Çizgi İzleyen Yarışması (2 Öğrenci)</option>
+            </select>
+        </div>
+
+        <!-- ZORUNLU ALAN: Dinamik Öğrenci (En az 1 tane) -->
+        <div id="studentContainer" class="student-fields">
+            <label id="studentLabel">YARIŞMACI ÖĞRENCİ BİLGİLERİ *</label>
+            <div id="inputsWrapper"></div>
+        </div>
+
+        <button type="submit" id="subBtn" style="margin-top:20px;">KAYDI TAMAMLA</button>
+    </form>
+
+    <div id="result-box">
+        <div style="color:#008f4f; font-weight:800; margin-bottom:10px;">KAYIT BAŞARILI!</div>
+        <div id="display-id" style="font-size:2.2rem; color:var(--vurgu); font-weight:900;">-----</div>
+        <p style="font-size:0.75rem; margin-top:10px;">Takım numaranızı lütfen not alınız.</p>
+    </div>
+</div>
+
+<script>
+    function updateStudentFields() {
+        const kategori = document.getElementById('kategoriSelect').value;
+        const container = document.getElementById('studentContainer');
+        const wrapper = document.getElementById('inputsWrapper');
+        wrapper.innerHTML = '';
+        
+        let count = 1;
+        if (kategori === "Kagit Kule") count = 3;
+        else if (kategori === "Kagit Roket" || kategori === "Cizgi Izleyen") count = 2;
+        else if (kategori === "Mini Sumo") count = 1;
+
+        container.style.display = 'block';
+
+        for (let i = 1; i <= count; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `ogrenci_${i}`;
+            input.id = `ogrenci_${i}`;
+            input.placeholder = `${i}. Öğrencinin Adı Soyadı`;
+            // Sadece 1. öğrenciyi her durumda teknik olarak zorunlu tutuyoruz
+            if(i === 1) input.required = true; 
+            input.style.marginBottom = '12px';
+            wrapper.appendChild(input);
+        }
+    }
+
+    const scriptURL = 'GOOGLE_APPS_SCRIPT_URL_BURAYA';
+    const form = document.getElementById('regForm');
+    const btn = document.getElementById('subBtn');
+
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        // Ekstra Manuel Doğrulama (Zorunlu Alanlar Boşsa Durdur)
+        const mentor = document.getElementById('mentor_adi').value.trim();
+        const takim = document.getElementById('takim_adi').value.trim();
+        const kurum = document.getElementById('kurum').value.trim();
+        const kategori = document.getElementById('kategoriSelect').value;
+        const ogrenci1 = document.getElementById('ogrenci_1') ? document.getElementById('ogrenci_1').value.trim() : "";
+
+        if (!mentor || !takim || !kurum || !kategori || !ogrenci1) {
+            alert("Lütfen tüm zorunlu alanları (*) doldurunuz!");
+            return;
+        }
+        
+        btn.disabled = true;
+        btn.innerText = "SİSTEME KAYDEDİLİYOR...";
+
+        fetch(scriptURL, { method: 'POST', body: new FormData(form)})
+            .then(res => res.text())
+            .then(result => {
+                if (result === "ALREADY_EXISTS") {
+                    alert("DİKKAT: Bu takım adı ile bu kategoride zaten bir kayıt mevcut!");
+                    btn.disabled = false;
+                    btn.innerText = "KAYDI TAMAMLA";
+                } else if (result.startsWith("SUCCESS")) {
+                    const id = result.split(":")[1];
+                    document.getElementById('display-id').innerText = id;
+                    document.getElementById('result-box').style.display = 'block';
+                    form.reset();
+                    document.getElementById('studentContainer').style.display = 'none';
+                    btn.disabled = false;
+                    btn.innerText = "YENİ KAYIT OLUŞTUR";
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("Kayıt sırasında bir hata oluştu.");
+                    btn.disabled = false;
+                    btn.innerText = "TEKRAR DENE";
+                }
+            })
+            .catch(() => {
+                alert("Bağlantı hatası! İnternetinizi kontrol edin.");
+                btn.disabled = false;
+            });
+    });
+</script>
+</body>
+</html>
