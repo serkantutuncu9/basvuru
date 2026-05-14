@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kayıt Formu</title>
+    <title>STEM Yarışma Kayıt Formu</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -88,25 +88,21 @@
     </div>
 
     <form id="regForm">
-        <!-- ZORUNLU ALAN: Mentör -->
         <div class="form-group">
             <label><i class="fas fa-chalkboard-teacher"></i> MENTÖR ADI SOYADI *</label>
             <input type="text" name="mentor_adi" id="mentor_adi" required placeholder="Ad Soyad bilgisini giriniz">
         </div>
 
-        <!-- ZORUNLU ALAN: Takım Adı -->
         <div class="form-group">
             <label><i class="fas fa-users"></i> TAKIM ADI *</label>
             <input type="text" name="takim_adi" id="takim_adi" required placeholder="Takım ismini yazınız">
         </div>
 
-        <!-- ZORUNLU ALAN: Kurum -->
         <div class="form-group">
             <label><i class="fas fa-school"></i> OKUL / KURUM *</label>
             <input type="text" name="kurum" id="kurum" required placeholder="Okulunuzun tam adını giriniz">
         </div>
 
-        <!-- ZORUNLU ALAN: Kategori -->
         <div class="form-group">
             <label><i class="fas fa-trophy"></i> YARIŞMA KATEGORİSİ *</label>
             <select name="kategori" id="kategoriSelect" required onchange="updateStudentFields()">
@@ -118,7 +114,6 @@
             </select>
         </div>
 
-        <!-- ZORUNLU ALAN: Dinamik Öğrenci (En az 1 tane) -->
         <div id="studentContainer" class="student-fields">
             <label id="studentLabel">YARIŞMACI ÖĞRENCİ BİLGİLERİ *</label>
             <div id="inputsWrapper"></div>
@@ -154,31 +149,19 @@
             input.name = `ogrenci_${i}`;
             input.id = `ogrenci_${i}`;
             input.placeholder = `${i}. Öğrencinin Adı Soyadı`;
-            // Sadece 1. öğrenciyi her durumda teknik olarak zorunlu tutuyoruz
-            if(i === 1) input.required = true; 
+            input.required = true; 
             input.style.marginBottom = '12px';
             wrapper.appendChild(input);
         }
     }
 
-    const scriptURL = 'GOOGLE_APPS_SCRIPT_URL_BURAYA';
+    // Google Apps Script URL'niz buraya yerleştirildi
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZRaJdSYXTNOoyO48b9KpTwueFCTjOMofh29wTGv2YKEimR7NJeGUKSlFCBLJk-JUu/exec';
     const form = document.getElementById('regForm');
     const btn = document.getElementById('subBtn');
 
     form.addEventListener('submit', e => {
         e.preventDefault();
-
-        // Ekstra Manuel Doğrulama (Zorunlu Alanlar Boşsa Durdur)
-        const mentor = document.getElementById('mentor_adi').value.trim();
-        const takim = document.getElementById('takim_adi').value.trim();
-        const kurum = document.getElementById('kurum').value.trim();
-        const kategori = document.getElementById('kategoriSelect').value;
-        const ogrenci1 = document.getElementById('ogrenci_1') ? document.getElementById('ogrenci_1').value.trim() : "";
-
-        if (!mentor || !takim || !kurum || !kategori || !ogrenci1) {
-            alert("Lütfen tüm zorunlu alanları (*) doldurunuz!");
-            return;
-        }
         
         btn.disabled = true;
         btn.innerText = "SİSTEME KAYDEDİLİYOR...";
@@ -205,9 +188,11 @@
                     btn.innerText = "TEKRAR DENE";
                 }
             })
-            .catch(() => {
+            .catch(error => {
+                console.error('Hata!', error.message);
                 alert("Bağlantı hatası! İnternetinizi kontrol edin.");
                 btn.disabled = false;
+                btn.innerText = "TEKRAR DENE";
             });
     });
 </script>
