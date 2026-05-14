@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STEM Yarışma Kayıt Formu</title>
+    <title>STEM Yarışma Kayıt Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -84,25 +84,29 @@
     <div class="header">
         <i class="fas fa-atom"></i>
         <h2>KAYIT FORMU</h2>
-        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">STEM Başvuru Paneli</p>
+        <p style="font-size:0.8rem; opacity:0.7; margin-top:10px;">STEM Yarışma Başvuru Paneli</p>
     </div>
 
     <form id="regForm">
+        <!-- Mentör -->
         <div class="form-group">
             <label><i class="fas fa-chalkboard-teacher"></i> MENTÖR ADI SOYADI *</label>
-            <input type="text" name="mentor_adi" id="mentor_adi" required placeholder="Ad Soyad bilgisini giriniz">
+            <input type="text" name="mentor_adi" id="mentor_adi" required placeholder="Örn: Ahmet Yılmaz">
         </div>
 
+        <!-- Takım Adı -->
         <div class="form-group">
             <label><i class="fas fa-users"></i> TAKIM ADI *</label>
             <input type="text" name="takim_adi" id="takim_adi" required placeholder="Takım ismini yazınız">
         </div>
 
+        <!-- Okul -->
         <div class="form-group">
             <label><i class="fas fa-school"></i> OKUL / KURUM *</label>
-            <input type="text" name="kurum" id="kurum" required placeholder="Okulunuzun tam adını giriniz">
+            <input type="text" name="kurum" id="kurum" required placeholder="Okulunuzun tam adı">
         </div>
 
+        <!-- Kategori -->
         <div class="form-group">
             <label><i class="fas fa-trophy"></i> YARIŞMA KATEGORİSİ *</label>
             <select name="kategori" id="kategoriSelect" required onchange="updateStudentFields()">
@@ -114,6 +118,7 @@
             </select>
         </div>
 
+        <!-- Dinamik Öğrenci Alanları -->
         <div id="studentContainer" class="student-fields">
             <label id="studentLabel">YARIŞMACI ÖĞRENCİ BİLGİLERİ *</label>
             <div id="inputsWrapper"></div>
@@ -122,6 +127,7 @@
         <button type="submit" id="subBtn" style="margin-top:20px;">KAYDI TAMAMLA</button>
     </form>
 
+    <!-- Başarı Mesajı Paneli -->
     <div id="result-box">
         <div style="color:#008f4f; font-weight:800; margin-bottom:10px;">KAYIT BAŞARILI!</div>
         <div id="display-id" style="font-size:2.2rem; color:var(--vurgu); font-weight:900;">-----</div>
@@ -130,6 +136,7 @@
 </div>
 
 <script>
+    // Kategoriye göre input oluşturma
     function updateStudentFields() {
         const kategori = document.getElementById('kategoriSelect').value;
         const container = document.getElementById('studentContainer');
@@ -155,8 +162,8 @@
         }
     }
 
-    // Google Apps Script URL'niz buraya yerleştirildi
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbzZRaJdSYXTNOoyO48b9KpTwueFCTjOMofh29wTGv2YKEimR7NJeGUKSlFCBLJk-JUu/exec';
+    // Google Apps Script URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxv88q18pOyCwN5RKgIt4_vtEtICu7B5R-zcbRHhVDCY_421yRVWU2iiF1JmlUZ6far/exec';
     const form = document.getElementById('regForm');
     const btn = document.getElementById('subBtn');
 
@@ -170,7 +177,7 @@
             .then(res => res.text())
             .then(result => {
                 if (result === "ALREADY_EXISTS") {
-                    alert("DİKKAT: Bu takım adı ile bu kategoride zaten bir kayıt mevcut!");
+                    alert("⚠️ DİKKAT: Bu takım adı ile bu kategoride zaten bir kayıt mevcut!");
                     btn.disabled = false;
                     btn.innerText = "KAYDI TAMAMLA";
                 } else if (result.startsWith("SUCCESS")) {
@@ -183,14 +190,13 @@
                     btn.innerText = "YENİ KAYIT OLUŞTUR";
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
-                    alert("Kayıt sırasında bir hata oluştu.");
+                    alert("❌ Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.");
                     btn.disabled = false;
                     btn.innerText = "TEKRAR DENE";
                 }
             })
             .catch(error => {
-                console.error('Hata!', error.message);
-                alert("Bağlantı hatası! İnternetinizi kontrol edin.");
+                alert("🌐 Bağlantı hatası! İnternetinizi kontrol edip tekrar deneyin.");
                 btn.disabled = false;
                 btn.innerText = "TEKRAR DENE";
             });
